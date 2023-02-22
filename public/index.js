@@ -22,8 +22,8 @@ var app = new Vue({
         getData({ name='',act='zhen', lxid=this.levelIndex, fu=this.originIndex, px=this.sortIndex, page=this.page,  } = {}) {
             return new Promise((resolve, reject) => {
                 // const ip_address = 'http://r9qw9s.natappfree.cc';
-                const ip_address = 'http://localhost:8080';
-                axios.get(`${ip_address}/hycoc.aspx?act=${act}&lxid=${lxid}&px=${px}&name=${name}&page=${page}&fu=${fu}`)
+                // const ip_address = 'http://localhost:8080';
+                axios.get(`/hycoc.aspx?act=${act}&lxid=${lxid}&px=${px}&name=${name}&page=${page}&fu=${fu}`)
                     .then(res => resolve(res.data)).catch(err => reject(err));
             });
             
