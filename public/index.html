@@ -12,11 +12,13 @@
     <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2"></script> -->
 </head>
 <body>
-    <div id="app">
+    <div id="app" v-cloak>
         <div class="top">
             <div v-for="item in filter" class="filter-w">
-                <span class="filter-name">{{ item.name }}</span>
-                <span v-for="it in item.level" class="filter-item" :class="(item.type === 1 && levelIndex === it.lxid) || (item.type === 2 && originIndex === it.lxid) || (item.type === 3 && sortIndex === it.lxid) ? 'choosed' : ''" @click="filterClickEvent(it, item.type)">{{ it.lxname }}</span>
+                <div class="filter-name">{{ item.name }}</div>
+                <div class="filter-area">
+                    <span v-for="it in item.level" class="filter-item" :class="(item.type === 1 && levelIndex === it.lxid) || (item.type === 2 && originIndex === it.lxid) || (item.type === 3 && sortIndex === it.lxid) ? 'choosed' : ''" @click="filterClickEvent(it, item.type)">{{ it.lxname }}</span>
+                </div>
             </div>
             <div class="filter-w">
                 <span class="filter-name">搜索：</span>
@@ -47,19 +49,60 @@
                 <span class="changebtn" @click="chagePage(3)">GO</span>
             </div>
         </div>
+        <div class="loading" v-if="loadingIf">
+            <div class="bg-gray">
+                <img src="./img/loading.png" alt="" class="loading-img">
+            </div>
+        </div>
     </div>
 </body>
 <style>
+    [v-cloak] {
+        display: none;
+    }
     #app {
         
     }
+    @keyframes rotate {
+        0%{-webkit-transform:rotate(0deg);}
+        25%{-webkit-transform:rotate(90deg);}
+        50%{-webkit-transform:rotate(180deg);}
+        75%{-webkit-transform:rotate(270deg);}
+        100%{-webkit-transform:rotate(360deg);}
+    }
+    .loading-img { animation: rotate 1.5s linear infinite; }
+    .loading {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index:999;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .loading .bg-gray {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0, 0, 0, 0.8);
+        border-radius: 10px
+    }
+    .bg-gray .loading-img {
+        width: 60%;
+        height:60%;
+    }
     .top {
         margin-top: 20px;
-        margin-left: 20px;
+        margin-left: 10px;
     }
     .top .filter-w {
         margin-bottom: 5px;
         position: relative;
+        display: flex;
     }
     .filter-w .search-box {
         display: inline-block;
@@ -90,22 +133,27 @@
         color: #FFF;
         padding: 0 10px;
         cursor: pointer;
-        position: absolute;
         margin-left: 10px;
-        top:0;
     }
     .top .filter-name {
         font-size: 20px;
         font-weight: 500;
+    }
+    .top .filter-area {
+        flex: 1;
+        margin-bottom: 5px;
+        margin-top: -4px;
     }
     .top .filter-item {
         border-radius: 5px;
         padding: 0 5px;
         color: #FFF;
         background-color: rgb(92, 86, 86);
-        margin-right: 5px;
         font-size: 18px;
         cursor: pointer;
+        /* white-space: nowrap; */
+        float: left;
+        margin: 5px 0 0 5px;
     }
     .top .filter-item:hover {
         background-color: #FF5E4C;
@@ -126,10 +174,9 @@
         flex-wrap: wrap;
     }
     .center .box-cover .box {
-        width: 400px;
-        height: 202px;
-        margin-right: 10px;
-        margin-bottom: 10px;
+        width: 360px;
+        height: 180px;
+        margin: 0 10px 10px;
         position: relative;
         border: 5px solid rgb(232, 208, 208);
         border-radius: 5px;
@@ -204,11 +251,11 @@
         color: #FF5E4C;
         border: 1px solid #FF5E4C;
         font-size: 18px;
-        height: 28px;
-        line-height: 28px;
+        height: 26px;
+        line-height: 26px;
         background-color: #FFF;
         border-radius: 5px;
-        padding: 0 10px;
+        padding: 0 5px;
         display: inline-block;
     }
     .bottom .pageBox input{

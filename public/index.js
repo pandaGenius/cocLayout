@@ -12,6 +12,8 @@ var app = new Vue({
             page: 1,
             pagesum: 0,
             pageNumber: '',
+
+            loadingIf: false
         }
     },
     created() {
@@ -39,7 +41,9 @@ var app = new Vue({
             // axios.get('http://localhost:8080/hycoc.aspx?act=lx&lxid=69&px=')
         },
         init(obj = {}) {
+            this.loadingIf = true;
             this.getData(obj).then(res => {
+                this.loadingIf = false;
                 this.formation = res;
                 this.pageNumber = '';
                 if (this.formation.length) {
@@ -47,7 +51,7 @@ var app = new Vue({
                 } else {
                     this.pagesum = 0;
                 }
-            }).catch(err => err);
+            }).catch(err => this.loadingIf = false);
         },
         filterClickEvent(it, type) {
             console.log(it, type);
@@ -117,7 +121,7 @@ var app = new Vue({
             }
         },
         imgClickEvent(item) {
-            window.open(item.tp);
+            // window.open(item.tp);
         },
         copyClickEvent(item) {
             console.log(item.url)
@@ -140,7 +144,8 @@ var app = new Vue({
             input.select();
             if (document.execCommand('copy')) {
                 document.execCommand('copy');
-                alert(`复制成功！您复制的链接为：${newUrl}`);
+                alert('阵型复制成功，请前往浏览器打开！')
+                // alert(`复制成功！您复制的链接为：${newUrl}`);
             }
             document.body.removeChild(input);
         }
