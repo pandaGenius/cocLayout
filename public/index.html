@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COC LAYOUT COPY</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2"></script> -->
+</head>
+<body>
+    <div id="app">
+        <div class="top">
+            <div v-for="item in filter" class="filter-w">
+                <span class="filter-name">{{ item.name }}</span>
+                <span v-for="it in item.level" class="filter-item" :class="(item.type === 1 && levelIndex === it.lxid) || (item.type === 2 && originIndex === it.lxid) || (item.type === 3 && sortIndex === it.lxid) ? 'choosed' : ''" @click="filterClickEvent(it, item.type)">{{ it.lxname }}</span>
+            </div>
+            <div class="filter-w">
+                <span class="filter-name">搜索：</span>
+                <div class="search-box">
+                    <input type="text" placeholder="请输入关键词" v-model="searchWord">
+                    <span class="search-btn" @click="searchClickEvent">搜索</span>
+                </div>
+                <span class="reset-btn" @click="resetEvent">重置</span>
+            </div>
+        </div>
+        <div class="center">
+            <div class="box-cover">
+                <div class="box" v-for="item in formation">
+                    <img :src="item.tp" alt="" class="bg-img" @click="imgClickEvent(item)">
+                    <span class="desc-left desc-l-r">{{item.ms}} {{item.tpms === '1' ? '国服' : '国际服'}}</span>
+                    <span class="desc-right desc-l-r">人气： {{item.tj2}}</span>
+                    <span class="copy-btn" @click="copyClickEvent(item)">复制阵型</span>
+                    <div class="desc-btm">{{ item.bt}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="bottom">
+            <div class="pageBox">
+                <span class="changebtn" @click="chagePage(1)">上一页</span>
+                <span>{{page}}/{{pagesum}}</span>
+                <span class="changebtn" @click="chagePage(2)">下一页</span>
+                <input placeholder="页码" v-model.number="pageNumber" type="number">
+                <span class="changebtn" @click="chagePage(3)">GO</span>
+            </div>
+        </div>
+    </div>
+</body>
+<style>
+    #app {
+        
+    }
+    .top {
+        margin-top: 20px;
+        margin-left: 20px;
+    }
+    .top .filter-w {
+        margin-bottom: 5px;
+        position: relative;
+    }
+    .filter-w .search-box {
+        display: inline-block;
+        background-color: #FF5E4C;
+        padding: 2px;
+    }
+    .filter-w input {
+        border: #FFF;
+        width: 150px;
+        font-size: 18px;
+        outline: 0;
+        height: 26px;
+        line-height: 26px;
+        padding: 0 10px;
+    }
+    .filter-w .search-btn {
+        margin: 0 10px;
+        color: #FFF;
+        cursor: pointer;
+    }
+    .filter-w .reset-btn {
+        display: inline-block;
+        background-color: #FF5E4C;
+        padding: 2px;
+        height: 30px;
+        font-size: 16px;
+        line-height: 30px;
+        color: #FFF;
+        padding: 0 10px;
+        cursor: pointer;
+        position: absolute;
+        margin-left: 10px;
+        top:0;
+    }
+    .top .filter-name {
+        font-size: 20px;
+        font-weight: 500;
+    }
+    .top .filter-item {
+        border-radius: 5px;
+        padding: 0 5px;
+        color: #FFF;
+        background-color: rgb(92, 86, 86);
+        margin-right: 5px;
+        font-size: 18px;
+        cursor: pointer;
+    }
+    .top .filter-item:hover {
+        background-color: #FF5E4C;
+        color: #FFF;
+    }
+    .top .choosed {
+        background-color: #FF5E4C;
+    }
+    
+    .center {
+        display: flex;
+        margin-top: 10px;
+        justify-content: center;
+    }
+    .center .box-cover {
+        width: 1260px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .center .box-cover .box {
+        width: 400px;
+        height: 202px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        position: relative;
+        border: 5px solid rgb(232, 208, 208);
+        border-radius: 5px;
+        overflow: hidden;
+        background-color: rgb(10, 115, 45);
+    }
+    .box .bg-img {
+        width: 100%;
+    }
+    .box .desc-l-r {
+        height: 28px;
+        line-height: 28px;
+        padding: 0 5px;
+        text-align: center;
+        border: 2px solid #FFF;
+        border-radius: 2px;
+        background-color: rgb(37, 37, 108);
+        color: #FFF;
+        opacity: .6;
+    }
+    .box .desc-left {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+    }
+    .box .desc-right {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+    }
+    .box .desc-btm {
+        width: 100%;
+        height: 30px;
+        line-height: 30px;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        text-align: center;
+        background-color: #FF5E4C;
+        color: #FFF;
+    }
+    .box .copy-btn {
+        position: absolute;
+        right: 10px;
+        bottom: 50px;
+        height: 28px;
+        line-height: 28px;
+        padding: 0 5px;
+        text-align: center;
+        border: 2px solid #FFF;
+        border-radius: 2px;
+        background-color: #FF5E4C;
+        color: #FFF;
+        cursor: pointer;
+    }
+
+    .bottom {
+        margin-top: 15px;
+        margin-bottom: 80px;
+    }
+    .bottom .pageBox{
+        text-align: center;
+    }
+    .bottom .pageBox .changebtn {
+        cursor: pointer;
+    }
+    .bottom .pageBox .changebtn:hover {
+        background-color: #FF5E4C;
+        color: #FFF;
+    }
+    .bottom .pageBox span{
+        color: #FF5E4C;
+        border: 1px solid #FF5E4C;
+        font-size: 18px;
+        height: 28px;
+        line-height: 28px;
+        background-color: #FFF;
+        border-radius: 5px;
+        padding: 0 10px;
+        display: inline-block;
+    }
+    .bottom .pageBox input{
+        width: 50px;
+        font-size: 18px;
+        outline: 0;
+        border: 1px solid #FF5E4C;
+        height: 28px;
+        line-height: 28px;
+        border-radius: 5px;
+        padding: 0 10px;
+    }
+    input::-webkit-input-placeholder { 
+        /* WebKit browsers，webkit内核浏览器 */
+        color: #FF5E4C; 
+        opacity: .5;
+        font-size: 16px;
+    } 
+
+    /* 普通IE浏览器 样式清除 */
+    input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{
+        -webkit-appearance: none !important;
+    }
+    </style>
+<script src="index.js"></script>
+</html>
