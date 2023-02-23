@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>隐藏彩蛋</title>
+    <link href="./favicon.ico" rel="icon" type="image/x-ico">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <div class="root" v-if="isWx">
+            <div class="arrow clear"></div>
+            <p class="desc clear">请在菜单中选择<b>“在默认浏览器中打开”</b>继续</p>
+        </div>
+        <div class="main" v-else>
+            <div class="main-cover">
+                <div 
+                    class="group" 
+                    v-for="item in menuList" 
+                    :key="item.id"
+                    :style="{ color: item.color, border: '2px solid' + item.color}"
+                    @click="menuClick(item.id)"
+                >
+                    {{ item.name }}
+                </div>
+            </div>
+        </div>
+        <div class="cover">
+            <img class="logo-img" src="./img/earth.gif" alt="">
+        </div>
+        <div class="picker" :class="pickerIf ? 'picker-show' : 'picker-hide'">
+            <div class="close-picker" @click="hidePicker()">关闭</div>
+            <div class="container">
+                <p
+                    v-for="item in itemObj[clickId]"
+                    :key="item.link"
+                    @click="menuItemClick(item.link)"
+                >
+                    {{ item.name }}
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+    #app {
+        background-color: #000;
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+    }
+    .picker-show {
+        left: 0;
+        bottom: 0;
+        transition: all .5s;
+    }
+    .picker-hide {
+        left: 0;
+        bottom: -180px;
+        transition: all .5s
+    }
+    .picker {
+        width: 100%;
+        position: absolute;
+        
+        background-color: #FFF;
+        border-radius: 10px 10px 0 0;
+        z-index: 9;
+    }
+    .close-picker {
+        position: absolute;
+        right: 20px;
+        top: 10px;
+        color: #FF5E4C;
+        font-size: 20px;
+        z-index:10;
+    }
+
+    .container {
+        padding: 50px 20px;
+        text-align: center;
+        max-height: 360px;
+        min-height: 80px;
+        overflow-y: scroll;
+    }
+
+    .container p {
+        line-height: 2;
+        font-size: 18px;
+    }
+
+    .main {
+        color: #FFF;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+    }
+    .main-cover {
+        padding-top: 100px;
+        font-size: 28px;
+        font-family: "Lantinghei SC", "Hiragino Sans GB", SimHei, Arial, sans-serif;
+    }
+    .main-cover .group {
+        margin-bottom: 20px;
+        border-radius: 5px;
+        padding: 2px 10px;
+    }
+    /* .green-group {
+        color: #05fa05;
+        border: 2px solid #05fa05;
+    }
+    .yellow-group {
+        color: #fbfb03;
+        border: 2px solid #fbfb03;
+    } */
+
+    .root {
+        width: 100%;
+        font-size: 15px;
+        color: #FFF;
+        letter-spacing: 0;
+        line-height: 30px;
+        position: relative;
+    }
+
+    .cover {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 50px;
+        font-family: "Lantinghei SC", "Hiragino Sans GB", SimHei, Arial, sans-serif;
+        position: fixed;
+        left: 0;
+        top: 50%;
+        /* margin-top: -110px; */
+    }
+    .logo-img {
+        width: 100%;
+    }
+    .arrow {
+        width: 51px;
+        height: 62px;
+        background: url('./img/guide_arrow.png') center center no-repeat;
+        background-size: cover;
+        position: absolute;
+        right: 20px;
+        top: 10px;
+    }
+
+    .desc {
+        width: 100%;
+        text-align: center;
+        position: relative;
+        right: 0;
+        top: 100px;
+    }
+
+    b {
+        /* color: #333333; */
+        color: #FFF;
+    }
+</style>
+<script src="./js/egg.js"></script>
+
+</html>

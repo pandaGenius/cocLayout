@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COC LAYOUT COPY</title>
+    <title>部落冲突</title>
+    <link href="./favicon.ico" rel="icon" type="image/x-ico">
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
     <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
@@ -13,6 +14,9 @@
 </head>
 <body>
     <div id="app" v-cloak>
+        <div class="banner">
+            <img class="logo-img" src="./img/coc_logo_cn.png" alt="">
+        </div>
         <div class="top">
             <div v-for="item in filter" class="filter-w">
                 <div class="filter-name">{{ item.name }}</div>
@@ -49,7 +53,17 @@
                 <span class="changebtn" @click="chagePage(3)">GO</span>
             </div>
         </div>
-        <div class="loading" v-if="loadingIf">
+        <div class="pop-up" v-if="popIf" @touchmove.prevent>
+            <div class="pop-box">
+                <div class="title">{{ popTitle }}</div>
+                <div class="desc" v-html="popDesc"></div>
+                <div class="btns">
+                    <div class="cancel btn" @click="hideModel()">{{cancelText}}</div>
+                    <div class="confirm btn" @click="confirmClick">{{confirmText}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="loading" v-if="loadingIf" @touchmove.prevent>
             <div class="bg-gray">
                 <img src="./img/loading.png" alt="" class="loading-img">
             </div>
@@ -62,6 +76,73 @@
     }
     #app {
         
+    }
+    .banner {
+        width: 100%;
+        text-align: center;
+    }
+    .logo-img {
+        width: 70%;
+        max-width: 300px;
+    }
+    .pop-up {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index:999;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+    .pop-box {
+        width: 300px;
+        /* height: 200px; */
+        background-color: #FFF;
+        border-radius: 10px;
+        box-sizing: border-box;
+    }
+    .pop-box .title {
+        font-size: 18px;
+        font-weight: 800;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+    }
+    .pop-box .desc {
+        min-height: 100px;
+        line-height: 1.5;
+        word-break: break-all;
+        padding: 0 20px 20px;
+        box-sizing: border-box;
+    }
+    .pop-box .new-url {
+        color: rgb(32, 112, 209);
+    }
+    .pop-box .btns {
+        height: 50px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+    .btns .btn {
+        flex: 1;
+        height: 100%;
+        line-height: 50px;
+        text-align: center;
+    }
+    .btns .cancel {
+        color: #FF5E4C;
+        border-top: 1px solid #FF5E4C;
+        box-sizing: border-box;
+        border-radius: 0 0 0 10px;
+    }
+    .btns .confirm {
+        color: #FFF;
+        background-color: #FF5E4C;
+        border-radius: 0 0 10px 0;
     }
     @keyframes rotate {
         0%{-webkit-transform:rotate(0deg);}
@@ -96,7 +177,7 @@
         height:60%;
     }
     .top {
-        margin-top: 20px;
+        margin-top: 10px;
         margin-left: 10px;
     }
     .top .filter-w {
@@ -280,5 +361,5 @@
         -webkit-appearance: none !important;
     }
     </style>
-<script src="index.js"></script>
+<script src="./js/index.js"></script>
 </html>
