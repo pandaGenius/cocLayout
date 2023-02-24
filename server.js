@@ -24,6 +24,10 @@ var targetUrl = "https://coc.heiyu100.cn/wx/";
 // 拦截http://localhost:3000/admin/*  的请求，转到目标服务器:https://coc.heiyu100.cn/wx/*   
 app.use('/hycoc.aspx/', createProxyMiddleware({ target: targetUrl, changeOrigin: true }));
 
+app.get('/', () => {
+    return '/index.html';
+});
+
 app.listen(80, () => {
     console.log('服务器启动成功！请在浏览器中打开网址：http://localhost:80/index.html');
 });
