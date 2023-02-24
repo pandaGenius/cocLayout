@@ -3,49 +3,10 @@ var app = new Vue({
     data() {
         return {
             pickerIf: false,
-            clickId: 0,
-            menuList: [
-                {
-                    name: '影视组',
-                    color: '#05fa05',
-                    id: 1,
-                },
-                {
-                    name: '能量组',
-                    color: '#fbfb03',
-                    id: 2,
-                },
-            ],
-            itemObj: {
-                '1': [
-                    {
-                        name: '大师兄影视',
-                        link: 'https://dsxys.pro'
-                    },
-                    {
-                        name: '奇优影院',
-                        link: 'http://qiyoudy.vip'
-                    },
-                    {
-                        name: '西瓜影院',
-                        link: 'http://www.bgcjyw.com'
-                    },
-                    {
-                        name: '美剧天堂',
-                        link: 'https://wap.meijutt.tv'
-                    },
-                    {
-                        name: '爱美剧',
-                        link: 'https://m.imeijutv.com/index.html'
-                    },
-                ],
-                '2': [
-                    {
-                        name: '汤姆',
-                        link: 'https://tom622.com'
-                    },
-                ]
-            }
+            menuList: [],
+            intactMenuList: [],
+            itemList: [],
+            gestureFeatures: [],
         }
     },
     computed: {
@@ -54,13 +15,29 @@ var app = new Vue({
         }
     },
     created() {
-
+        axios.get('http://rqkoe7kar.hd-bkt.clouddn.com/source-config.json')
+            .then(res => {
+                try {
+                    const data = JSON.parse(JSON.stringify(res.data));
+                    this.intactMenuList = data.menuList;
+                    const incompleteList = data.menuList.filter(el => {
+                        return el.id !== 2;
+                    });
+                    this.menuList = incompleteList;
+                } catch (error) {
+                    console.log(error);
+                }
+            })
+            .catch(err => err);
+    },
+    mounted() {
+        this.onGesture();
     },
     methods: {
-        menuClick(id) {
-            this.clickId = id;
+        menuClick(item) {
+            console.log(item)
+            this.itemList = item.itemList;
             this.showPicker();
-
         },
         menuItemClick(link) {
             window.open(link);
@@ -69,8 +46,51 @@ var app = new Vue({
             this.pickerIf = true;
         },
         hidePicker() {
+            this.itemList = [];
             this.pickerIf = false;
-            this.clickId = 0;
         },
+        inToEgg() {
+            this.menuList = this.intactMenuList;
+        },
+        onGesture() {
+            const that = this;
+            let startX = 0;
+            let startY = 0;
+            document.addEventListener('touchstart', function (e) {
+                startX = e.changedTouches[0].pageX;
+                startY = e.changedTouches[0].pageY;
+            });
+            document.addEventListener('touchmove', function (e) {
+                try {
+                    const moveEndX = e.changedTouches[0].pageX;
+                    const moveEndY = e.changedTouches[0].pageY;
+                    const X = moveEndX - startX;
+                    const Y = moveEndY - startY;
+                    if (Math.abs(X) > Math.abs(Y) && X > 0) {
+                        startX = e.changedTouches[0].pageX;
+                        startY = e.changedTouches[0].pageY;
+                        if (that.gestureFeatures[that.gestureFeatures.length - 1] !== 1) {
+                            that.gestureFeatures.push(1);
+                        }
+                    }
+                    if (Math.abs(X) > Math.abs(Y) && X < 0) {
+                        startX = e.changedTouches[0].pageX;
+                        startY = e.changedTouches[0].pageY;
+                        if (that.gestureFeatures[that.gestureFeatures.length - 1] !== 2) {
+                            that.gestureFeatures.push(2);
+                        }
+                    }
+                    if (that.gestureFeatures.length > 10) {
+                        that.gestureFeatures = [];
+                        that.inToEgg();
+                    }
+                } catch (err) {
+                    console.log(err);
+                }
+            });
+            document.addEventListener('touchend', function (e) {
+                that.gestureFeatures = [];
+            });
+        }
     }
 })
